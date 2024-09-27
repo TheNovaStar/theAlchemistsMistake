@@ -1,0 +1,29 @@
+{
+"players": {
+            "alice": {"starting_items": ["None"], "starting_room": "hall"}
+          },
+"rooms": {
+        "hall": {"name": "Hall", "item": "None", "north": "bedroom", "south": "None", "east": "hall2", "west": "None", "enemy": "None", "text": "Nothing in this hall."},
+        "bedroom": {"name": "Bedroom", "item": "sword", "north": "hall", "south": "None", "east": "bathroom", "west": "None", "enemy": "None", "text": "The bedroom looks normal."},
+        "hall2": {"name": "Hall 2", "item": "None", "north": "attic", "south": "hall", "east": "None", "west": "bathroom", "enemy": "None", "text": "A small door is on the ceiling."},
+        "attic": {"name": "Attic", "item": "mirror", "north": "None", "south": "hall2", "east": "None", "west": "None", "enemy": "None", "text": "There is a mirror."},
+        "bathroom": {"name": "Bathroom", "item": "spellbook", "north": "None", "south": "cellar", "east": "None", "west": "bedroom", "enemy": "None", "text": "The bathroom looks normal"},
+        "cellar": {"name": "Cellar", "item": "None", "north": "None", "south": "None", "east": "None", "west": "bedroom", "enemy": "goblin", "text": "Aha! A goblin!"}
+          },
+"items": {
+          "sword": {"name": "Sword", "text": "There is a sword in this room."},
+          "mirror": {"name":  "Mirror", "text": "Find not what can be found where water flows."},
+          "spellbook": {"name":  "spell book", "text": "Alice's spell book."}
+          },
+"enemys": {
+            "goblin": {"name": "Goblin",
+                      "defeat_items": ["spellbook","sword"],
+                      "intro_text": "The goblin attacks!",
+                      "fight_text": {
+                                      "spellbook": ["The goblin lunges at you. If only you had a spell to help you distract him.", "The goblin lunges at you, you cast illusion on him and he is distracted"],
+                                      "sword": ["The goblin lunges at you. If only you had a weapon.", "While he is distracted you stab him with your sword!"]
+                                    },
+                      "death_text":  "You defeated the goblin!"
+                      }
+            }
+}

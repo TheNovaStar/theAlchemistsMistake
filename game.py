@@ -108,7 +108,7 @@ if __name__ == '__main__':
     #Read level data from file
     #TODO: add a menu that reads level data from user input
 
-    with open('level.json', 'r') as level:
+    with open('aaliyahsLevel.json', 'r') as level:
         level_data = json.load(level)
 
     #Initializes game
