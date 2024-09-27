@@ -1,4 +1,5 @@
 import json
+import time
 
 class Player:
     def __init__(self, items=None):
@@ -63,10 +64,12 @@ class Item:
        print(f'Item: {self.name}')
 
 class Enemy:
-    def __init__(self, name='notNamed', defeat_items = None, text = None):
+    def __init__(self, name='notNamed', defeat_items = None, intro_text = None, fight_text = None,death_text = None):
         self.name = name
         self.defeat_items = defeat_items
-        self.text = text
+        self.intro_text = intro_text
+        self.fight_text = fight_text
+        self.death_text = death_text
         self.alive = True
 
     def __str__(self):
@@ -81,14 +84,21 @@ class Enemy:
 
         print(out_str)
 
-    def fight(self):
+    def fight(self, player):
         """Returns True if player wins, False otherwise."""
-        #TODO: implement fight flavor text for enemies
         if self.alive:
             if self.defeat_items is not None:
                 for item in self.defeat_items:
-                    if item in player.items: continue
-                    else: return False
+                    if item in player.items:
+                        print(self.fight_text[item][1])
+                        print()
+                        time.sleep(0.5)
+                        continue
+                    else:
+                        print(self.fight_text[item][0])
+                        print()
+                        time.sleep(0.5)
+                        return False
                 else: return True
             else: return True
         else: return True
@@ -131,61 +141,113 @@ if __name__ == '__main__':
         eval(item).text = level_data['items'][item]['text']
 
     # I used "enemys" instead of "enemies" so that I can use the .rstrip method to depluralize it.
+    enemies_list = []
     for enemy in level_data['enemys'].keys():
+        enemies_list.append(eval(enemy))
         eval(enemy).name = level_data['enemys'][enemy]['name']
-        eval(enemy).text = level_data['enemys'][enemy]['text']
+        eval(enemy).intro_text = level_data['enemys'][enemy]['intro_text']
+        eval(enemy).death_text = level_data['enemys'][enemy]['death_text']
 
+        eval(enemy).fight_text = {}
         eval(enemy).defeat_items = []
         for item in level_data['enemys'][enemy]['defeat_items']:
             eval(enemy).defeat_items.append(eval(item))
+            eval(enemy).fight_text[eval(item)] = level_data['enemys'][enemy]['fight_text'][item]
 
     player = eval(f'{list(level_data['players'].keys())[0]}')
 
-    #FIXME: create gameplay loop
-
     # Display any one-time starting text for the game
+    #FIXME: Implement initial description as a player attribute
 
     while True:
-    # for each room, display the room's description text.
+        # for each room, display the room's description text.
         print(player.room.text)
-        if player.room.item is not None:
-            print(player.room.item.text)
+        print()
+        time.sleep(0.5 + (len(player.room.text)/1000))
 
-    # if enemies are present, describe them. Then, fight them and describe the results. If the player loses the fight, the game is over.
+        # if enemies are present, describe them. Then, fight them and describe the results. If the player loses the fight, the game is over.
         if player.room.enemy is not None:
             if player.room.enemy.alive:
-                print(player.room.enemy.text)
-                if not player.room.enemy.fight():
+                print(player.room.enemy.intro_text)
+                print()
+                time.sleep(0.5)
+                if not player.room.enemy.fight(player):
                     player.alive = False
                     break
                 else:
                     player.room.enemy.alive = False
-            else:
-                #TODO: implement death text for enemies
-                ...
+                    print(player.room.enemy.death_text)
+                    print()
+                    time.sleep(0.5)
 
 
-    # FIXME:if the player defeated all enemies, they win!
+        # Check if the player has won
+        for enemy in enemies_list:
+            if enemy.alive:
+                break
+        else:
+            player.win = True
+            break
 
-    # FIXME:if the game is not yet over, continue with the game:
 
-    # FIXME:if the room has an item, describe it and ask the player if they want to pick it up.
+        # If the room contains an item, prompt the player to pick it up
+        if player.room.item is not None:
+            print(player.room.item.text)
+            print()
+            time.sleep(0.5)
 
-    # prompt the player to choose where to go next.
+            while True:
+                item_choice = input(f'Would you like to pick up the {player.room.item}? [y/n] ')
+                if item_choice.lower().strip() == 'y':
+                    player.items.append(player.room.item) #This is hardcoded for rooms to only have one item.
+                    time.sleep(0.1)
+                    print(f'You picked up the {player.room.item}!')
+                    print()
+                    time.sleep(0.5)
+                    player.room.item = None
+                    break
+                elif item_choice.lower().strip() == 'n':
+                    time.sleep(0.1)
+                    print(f'You did not pick up the {player.room.item}.')
+                    print()
+                    time.sleep(0.5)
+                    break
+                else:
+                    print('Please choose a valid response.\n')
+                    print()
+                    time.sleep(0.5)
+
+
+        # prompt the player to choose where to go next.
+        for direction in ['north', 'south', 'east', 'west']:
+            if eval(f'player.room.{direction}') is not None:
+                print(f'{eval(f'player.room.{direction}')} is to the {direction}.')
+                time.sleep(0.25)
+        else:
+            print()
+            time.sleep(0.25)
+
         player_move = input('Please enter a direction: North, South, West, East or Exit: ').lower().strip()
         if player_move == 'exit':
+            time.sleep(0.5)
             break
-        elif eval(f'player.room.{player_move}') is not None:
+        elif hasattr(player.room, player_move) and eval(f'player.room.{player_move}') is not None:
+            time.sleep(0.1)
             player.room = eval(f'player.room.{player_move}')
-            print(f'Moved to {player.room}')
+            print(f'Moved to {player.room}.\n')
 
-        else: print('Please enter a valid direction!')
+        else:
+            time.sleep(0.01)
+            print('Please enter a valid direction!\n')
+            time.sleep(0.5)
 
     # When gameplay loop terminates, summarize the game and display text for winning, losing, and quitting.
     if player.win:
-        print('You win!')
+        print('You win!\n')
+        time.sleep(1)
     elif not player.alive:
-        print('You died!')
+        print('You died!\n')
+        time.sleep(1)
 
     print('Thanks for playing!')
 

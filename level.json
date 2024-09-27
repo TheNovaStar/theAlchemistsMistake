@@ -1,0 +1,22 @@
+{
+"players": {
+            "alice": {"starting_items": ["book"], "starting_room": "hall"}
+          },
+"rooms": {
+        "hall": {"name": "Hall", "item": "None", "north": "None", "south": "bedroom", "east": "None", "west": "None", "enemy": "None", "text": "Nothing in the hall."},
+        "bedroom": {"name": "Bedroom", "item": "sword", "north": "hall", "south": "None", "east": "cellar", "west": "None", "enemy": "None", "text": "The bedroom looks normal."},
+        "cellar": {"name": "Cellar", "item": "None", "north": "None", "south": "None", "east": "None", "west": "bedroom", "enemy": "goblin", "text": "Aha! A goblin!"}
+          },
+"items": {
+          "sword": {"name": "Sword", "text": "There is a sword in this room."},
+          "book": {"name":  "Book", "text": "Alice's favorite book."}
+          },
+"enemys": {
+            "goblin": {"name": "Goblin",
+                      "defeat_items": ["sword"],
+                      "intro_text": "The goblin attacks!",
+                      "fight_text": {"sword": ["The goblin lunges at you. If only you had a weapon.", "The goblin lunges at you, but you stab him with your sword!"]},
+                      "death_text":  "You defeated the goblin!"
+                      }
+            }
+}
