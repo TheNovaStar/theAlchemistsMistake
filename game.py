@@ -247,8 +247,8 @@ if __name__ == '__main__':
             print()
             time.sleep(0.5)
 
-        player_move = input('Please enter a direction: North, South, West, East or Exit: ').lower().strip()
-        if player_move == 'exit':
+        player_move = input('Please enter a direction: North, South, West, East or Quit: ').lower().strip()
+        if player_move == 'quit':
             time.sleep(0.5)
             break
         elif hasattr(player.room, player_move) and eval(f'player.room.{player_move}') is not None:
